@@ -5,6 +5,12 @@ set -e
 
 echo "Starting deployment of abdos.cloud..."
 
+# Check if the network exists, create if it doesn't
+if ! docker network inspect web-network &>/dev/null; then
+    echo "Creating web-network..."
+    docker network create web-network
+fi
+
 # Build and start containers
 echo "Building and starting Docker containers..."
 docker-compose down

@@ -1,12 +1,13 @@
 # abdos.cloud Website Deployment
 
-This repository contains the necessary files to deploy a static HTML website to abdos.cloud using Docker and Nginx.
+This repository contains the necessary files to deploy a static HTML website to abdos.cloud using Docker and Traefik.
 
 ## Deployment Instructions
 
 ### Prerequisites
 - SSH access to your server
 - Docker and Docker Compose installed on the server
+- Traefik proxy already set up and running on the server
 
 ### Deployment Steps
 
@@ -23,7 +24,7 @@ This repository contains the necessary files to deploy a static HTML website to 
 4. Copy all files from your local repository to the server (using scp or rsync)
 5. Build and start the Docker containers:
    ```
-   docker-compose up -d
+   ./deploy.sh
    ```
 6. Your website should now be accessible at abdos.cloud
 
@@ -33,23 +34,20 @@ Ensure your domain's DNS records point to your server's IP address:
 - Create an A record for abdos.cloud pointing to your server's IP
 - Create an A record for www.abdos.cloud pointing to your server's IP
 
-### SSL Configuration (Optional)
+### Traefik Configuration
 
-To enable HTTPS, you can use Certbot with the Nginx Docker container. Add the following steps after deployment:
+This setup assumes you have Traefik already configured with:
+- HTTPS entrypoint
+- A certificate resolver named "simple-resolver"
+- A network named "web-network" (or it will be created by the deploy script)
 
-1. Install Certbot on your server
-2. Run Certbot to obtain SSL certificates:
-   ```
-   certbot --nginx -d abdos.cloud -d www.abdos.cloud
-   ```
-3. Certbot will automatically update your Nginx configuration
+If your Traefik configuration uses different names, update the labels in the docker-compose.yml file accordingly.
 
 ## Maintenance
 
 - To update the website, modify the HTML files in the `site` directory and rebuild:
   ```
-  docker-compose down
-  docker-compose up -d --build
+  ./deploy.sh
   ```
 - To view logs:
   ```
