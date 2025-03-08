@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    volumes:
+      - ./nginx-conf:/etc/nginx/conf.d
+    networks:
+      - web-network
+
+networks:
+  web-network:
+    driver: bridge
