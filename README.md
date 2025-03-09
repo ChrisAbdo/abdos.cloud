@@ -1,10 +1,11 @@
 # Abdos.Cloud Website
 
-A simple website deployed with Docker and Traefik, secured with HTTPS.
+A modern Next.js website deployed with Docker and Traefik, secured with HTTPS.
 
 ## Components
 
-- **Website**: Simple HTML website served by Nginx
+- **Next.js**: Modern React framework for the frontend
+- **Bun**: JavaScript runtime and package manager for fast builds
 - **Traefik**: Reverse proxy handling HTTPS and automatic certificate renewal
 - **Docker**: Container orchestration
 
@@ -13,7 +14,7 @@ A simple website deployed with Docker and Traefik, secured with HTTPS.
 The website is deployed using Docker Compose with the following services:
 
 1. **Traefik**: Handles routing, HTTPS, and automatic certificate renewal via Let's Encrypt
-2. **Website**: Nginx container serving the static HTML content
+2. **Next.js**: Next.js application in standalone mode for optimal performance
 
 ## Domains
 
@@ -28,10 +29,23 @@ To deploy the website:
 docker-compose up -d
 ```
 
-To update the website content, modify the files in the `html` directory and restart the containers:
+To update the Next.js application:
+
+1. Make your changes to the Next.js code
+2. Rebuild and restart the container:
 
 ```bash
-docker-compose restart website
+docker-compose up -d --build nextjs
+```
+
+## Development
+
+To develop locally:
+
+```bash
+cd nextjs
+bun install
+bun run dev
 ```
 
 ## Security

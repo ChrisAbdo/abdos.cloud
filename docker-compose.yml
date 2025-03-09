@@ -22,20 +22,20 @@ services:
       - "traefik.http.routers.traefik-dashboard.tls.certresolver=letsencrypt"
       - "traefik.http.routers.traefik-dashboard.service=api@internal"
 
-  website:
-    image: nginx:alpine
-    container_name: abdos-website
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: abdos-nextjs
     restart: always
-    volumes:
-      - ./html:/usr/share/nginx/html
     networks:
       - web
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.website.rule=Host(`abdos.cloud`) || Host(`www.abdos.cloud`)"
-      - "traefik.http.routers.website.entrypoints=websecure"
-      - "traefik.http.routers.website.tls.certresolver=letsencrypt"
-      - "traefik.http.services.website.loadbalancer.server.port=80"
+      - "traefik.http.routers.frontend.rule=Host(`abdos.cloud`) || Host(`www.abdos.cloud`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
 
 networks:
   web:
