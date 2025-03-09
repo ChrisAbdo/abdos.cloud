@@ -26,7 +26,7 @@ export default function ApiStatusBadge({ className }: { className?: string }) {
         <Tooltip>
             <TooltipTrigger asChild>
                 <Badge
-                    variant={isOnline ? "default" : "destructive"}
+                    variant={isOnline ? "default" : "outline"}
                     className={cn("flex items-center gap-1.5", className)}
                 >
                     {isLoading ? (
