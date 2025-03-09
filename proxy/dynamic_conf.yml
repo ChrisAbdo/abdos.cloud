@@ -1,9 +1,0 @@
-http:
-  middlewares:
-    cors-headers:
-      headers:
-        accessControlAllowOrigin: "https://abdos.cloud"
-        accessControlAllowMethods: "GET, OPTIONS, POST, PATCH, DELETE"
-        accessControlAllowHeaders: "Content-Type, Authorization, X-Requested-With"
-        addVaryHeader: true
-

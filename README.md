@@ -1,55 +1,46 @@
-# abdos.cloud Website Deployment
+# Abdos.Cloud Website
 
-This repository contains the necessary files to deploy a static HTML website to abdos.cloud using Docker and Traefik.
+A simple website deployed with Docker and Traefik, secured with HTTPS.
 
-## Deployment Instructions
+## Components
 
-### Prerequisites
-- SSH access to your server
-- Docker and Docker Compose installed on the server
-- Traefik proxy already set up and running on the server
+- **Website**: Simple HTML website served by Nginx
+- **Traefik**: Reverse proxy handling HTTPS and automatic certificate renewal
+- **Docker**: Container orchestration
 
-### Deployment Steps
+## Setup
 
-1. Clone this repository to your local machine
-2. SSH into your server:
-   ```
-   ssh username@your-server-ip
-   ```
-3. Create a directory for the project:
-   ```
-   mkdir -p /path/to/abdos-website
-   cd /path/to/abdos-website
-   ```
-4. Copy all files from your local repository to the server (using scp or rsync)
-5. Build and start the Docker containers:
-   ```
-   ./deploy.sh
-   ```
-6. Your website should now be accessible at abdos.cloud
+The website is deployed using Docker Compose with the following services:
 
-### Setting up DNS
+1. **Traefik**: Handles routing, HTTPS, and automatic certificate renewal via Let's Encrypt
+2. **Website**: Nginx container serving the static HTML content
 
-Ensure your domain's DNS records point to your server's IP address:
-- Create an A record for abdos.cloud pointing to your server's IP
-- Create an A record for www.abdos.cloud pointing to your server's IP
+## Domains
 
-### Traefik Configuration
+- Main website: https://abdos.cloud and https://www.abdos.cloud
+- Traefik dashboard: https://traefik.abdos.cloud
 
-This setup assumes you have Traefik already configured with:
-- HTTPS entrypoint
-- A certificate resolver named "simple-resolver"
-- A network named "web-network" (or it will be created by the deploy script)
+## Deployment
 
-If your Traefik configuration uses different names, update the labels in the docker-compose.yml file accordingly.
+To deploy the website:
+
+```bash
+docker-compose up -d
+```
+
+To update the website content, modify the files in the `html` directory and restart the containers:
+
+```bash
+docker-compose restart website
+```
+
+## Security
+
+- HTTPS is enforced with automatic redirects from HTTP to HTTPS
+- Modern TLS configurations with secure cipher suites
+- Security headers for protection against common web vulnerabilities
 
 ## Maintenance
 
-- To update the website, modify the HTML files in the `site` directory and rebuild:
-  ```
-  ./deploy.sh
-  ```
-- To view logs:
-  ```
-  docker-compose logs -f
-  ``` 
+- Let's Encrypt certificates are automatically renewed by Traefik
+- Logs can be viewed with `docker-compose logs` 
