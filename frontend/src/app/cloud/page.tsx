@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
+import { Badge } from "@/components/ui/badge"
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -39,6 +40,7 @@ export default function Page() {
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
+                    <Badge>Status</Badge>
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4">
                     {Array.from({ length: 24 }).map((_, index) => (
