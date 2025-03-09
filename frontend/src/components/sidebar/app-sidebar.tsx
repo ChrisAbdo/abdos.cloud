@@ -1,10 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { ArchiveX, Command, DatabaseIcon, File, Inbox, Send, Server, Trash2 } from "lucide-react"
+import { Code, Command, DatabaseIcon, Server } from "lucide-react"
+import { usePathname } from "next/navigation"
+import Link from "next/link"
 
 import { NavUser } from "./nav-user"
-import { Label } from "@/components/ui/label"
 import {
     Sidebar,
     SidebarContent,
@@ -12,54 +13,52 @@ import {
     SidebarGroup,
     SidebarGroupContent,
     SidebarHeader,
-    SidebarInput,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    useSidebar,
 } from "@/components/ui/sidebar"
-import { Switch } from "@/components/ui/switch"
+import { ModeToggle } from "./mode-toggle"
 
-// Define interface for mail items
-interface MailItem {
-    name: string
-    email: string
-    subject: string
-    date: string
-    teaser: string
+// Define the user data
+const userData = {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
 }
 
-// This is sample data
-const data = {
-    user: {
-        name: "shadcn",
-        email: "m@example.com",
-        avatar: "/avatars/shadcn.jpg",
+// Define the navigation items with their routes
+const navigationItems = [
+    {
+        title: "Create Postgres Database",
+        href: "/cloud/postgres",
+        icon: DatabaseIcon,
     },
-    navMain: [
-        {
-            title: "Create Postgres Database",
-            url: "#",
-            icon: DatabaseIcon,
-            isActive: true,
-        },
-        {
-            title: "Bun Web Server",
-            url: "#",
-            icon: Server,
-            isActive: false,
-        },
+    {
+        title: "Bun Web Server",
+        href: "/cloud/bun-server",
+        icon: Server,
+    },
+    {
+        title: "Next.js App",
+        href: "/cloud/nextjs",
+        icon: Code,
+    },
+]
 
-    ],
-    mails: [] as MailItem[],
+// Define interface for deployed services
+interface DeployedService {
+    name: string
+    type: string
+    status: string
+    date: string
+    region: string
 }
+
+// Empty array for deployed services (will be populated from DB in the future)
+const deployedServices: DeployedService[] = []
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    // Note: I'm using state to show active item.
-    // IRL you should use the url/router.
-    const [activeItem, setActiveItem] = React.useState(data.navMain[0])
-    const [mails, setMails] = React.useState<MailItem[]>(data.mails)
-    const { setOpen } = useSidebar()
+    const pathname = usePathname()
 
     return (
         <Sidebar
@@ -68,8 +67,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {...props}
         >
             {/* This is the first sidebar */}
-            {/* We disable collapsible and adjust width to icon. */}
-            {/* This will make the sidebar appear as icons. */}
             <Sidebar
                 collapsible="none"
                 className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r"
@@ -78,7 +75,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarMenu>
                         <SidebarMenuItem>
                             <SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
-                                <a href="#">
+                                <Link href="/cloud">
                                     <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                                         <Command className="size-4" />
                                     </div>
@@ -86,7 +83,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                         <span className="truncate font-semibold">Acme Inc</span>
                                         <span className="truncate text-xs">Enterprise</span>
                                     </div>
-                                </a>
+                                </Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                     </SidebarMenu>
@@ -95,23 +92,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarGroup>
                         <SidebarGroupContent className="px-1.5 md:px-0">
                             <SidebarMenu>
-                                {data.navMain.map((item) => (
+                                {navigationItems.map((item) => (
                                     <SidebarMenuItem key={item.title}>
                                         <SidebarMenuButton
                                             tooltip={{
                                                 children: item.title,
                                                 hidden: false,
                                             }}
-                                            onClick={() => {
-                                                setActiveItem(item)
-                                                setMails([]) // Keep mails empty
-                                                setOpen(true)
-                                            }}
-                                            isActive={activeItem?.title === item.title}
+                                            asChild
+                                            isActive={pathname === item.href}
                                             className="px-2.5 md:px-2"
                                         >
-                                            <item.icon />
-                                            <span>{item.title}</span>
+                                            <Link href={item.href}>
+                                                <item.icon />
+                                                <span>{item.title}</span>
+                                            </Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 ))}
@@ -120,51 +115,51 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </SidebarGroup>
                 </SidebarContent>
                 <SidebarFooter>
-                    <NavUser user={data.user} />
+                    <ModeToggle />
+                    <NavUser user={userData} />
                 </SidebarFooter>
             </Sidebar>
 
-            {/* This is the second sidebar */}
-            {/* We disable collapsible and let it fill remaining space */}
-            <Sidebar collapsible="none" className="hidden flex-1 md:flex">
-                <SidebarHeader className="gap-3.5 border-b p-4">
+            {/* This is the second sidebar showing deployed services */}
+            <div className="hidden flex-1 flex-col border-l md:flex">
+                <div className="flex flex-col gap-3.5 border-b p-4">
                     <div className="flex w-full items-center">
                         <div className="text-base font-medium text-foreground">
-                            {activeItem?.title}
+                            Your Deployments
                         </div>
-
                     </div>
-                    <SidebarInput placeholder="Type to search..." />
-                </SidebarHeader>
-                <SidebarContent>
-                    <SidebarGroup className="px-0">
-                        <SidebarGroupContent>
-                            {mails.length > 0 ? (
-                                mails.map((mail) => (
-                                    <a
-                                        href="#"
-                                        key={mail.email}
-                                        className="flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                                    >
-                                        <div className="flex w-full items-center gap-2">
-                                            <span>{mail.name}</span>{" "}
-                                            <span className="ml-auto text-xs">{mail.date}</span>
-                                        </div>
-                                        <span className="font-medium">{mail.subject}</span>
-                                        <span className="line-clamp-2 text-xs opacity-70">
-                                            {mail.teaser}
-                                        </span>
-                                    </a>
-                                ))
-                            ) : (
-                                <div className="p-4 text-sm text-muted-foreground">
-                                    No data available
+                    <div className="relative">
+                        <input
+                            className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                            placeholder="Search deployments..."
+                        />
+                    </div>
+                </div>
+                <div className="flex-1 overflow-auto">
+                    {deployedServices.length > 0 ? (
+                        deployedServices.map((service) => (
+                            <a
+                                href="#"
+                                key={service.name}
+                                className="flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                            >
+                                <div className="flex w-full items-center gap-2">
+                                    <span>{service.name}</span>{" "}
+                                    <span className="ml-auto text-xs">{service.date}</span>
                                 </div>
-                            )}
-                        </SidebarGroupContent>
-                    </SidebarGroup>
-                </SidebarContent>
-            </Sidebar>
+                                <span className="font-medium">{service.type}</span>
+                                <span className="line-clamp-2 text-xs opacity-70">
+                                    {service.region} • {service.status}
+                                </span>
+                            </a>
+                        ))
+                    ) : (
+                        <div className="p-4 text-sm text-muted-foreground">
+                            No deployments available. Create a new service to get started.
+                        </div>
+                    )}
+                </div>
+            </div>
         </Sidebar>
     )
 }
