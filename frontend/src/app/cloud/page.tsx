@@ -1,5 +1,4 @@
 import { AppSidebar } from "@/components/sidebar/app-sidebar"
-import { Badge } from "@/components/ui/badge"
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -14,6 +13,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
+import ApiStatusBadge from "@/components/api-status-badge"
 
 export default function Page() {
     return (
@@ -29,7 +29,7 @@ export default function Page() {
                 <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-4">
                     <SidebarTrigger className="-ml-1" />
                     <Separator orientation="vertical" className="mr-2 h-4" />
-                    <Breadcrumb>
+                    <Breadcrumb className="flex-1">
                         <BreadcrumbList>
                             <BreadcrumbItem className="hidden md:block">
                                 <BreadcrumbLink href="#">All Inboxes</BreadcrumbLink>
@@ -40,7 +40,7 @@ export default function Page() {
                             </BreadcrumbItem>
                         </BreadcrumbList>
                     </Breadcrumb>
-                    <Badge>Status</Badge>
+                    <ApiStatusBadge className="ml-auto" />
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4">
                     {Array.from({ length: 24 }).map((_, index) => (
